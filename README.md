@@ -4,16 +4,26 @@ QueueCare is a single-clinic token booking and queue management app. The fronten
 
 ## Project layout
 
-- `frontend/` — React, Vite, and TypeScript patient/staff web app.
-- `backend/` — FastAPI service and future database/authentication code.
+- `frontend/` — React, Vite, and TypeScript app.
+  - `src/pages/home/` — homepage component and page-specific styles.
+  - `src/styles/global.css` — shared Open Sans typography, reset, and design tokens.
+- `backend/` — FastAPI service.
+  - `app/api/v1/routes/` — versioned API route handlers.
+  - `app/core/` — application configuration.
 - `docs/REQUIREMENTS_SETUP.md` — product and deployment requirements.
 - `docs/UI_UX_PLAN.md` — proposed experience and visual direction.
+
+## Design system
+
+- **Color balance:** 60% pure white canvas, 30% soft blue and muted charcoal structure/copy, 10% teal reserved for primary CTA buttons.
+- **Typography:** Open Sans with the shared 1.250 Major Third scale in `frontend/src/styles/global.css`.
+- **Homepage:** reference-inspired header, split clinic-photo hero with illustrative queue phone screen, four-step explainer, booking CTA panel, and multi-column footer.
 
 ## Prerequisites
 
 - Node.js 20.19+ (or 22.12+) and npm.
 - Python 3.11+.
-- Supabase credentials are not needed for the current starter screens. They will be needed when authentication/database integration is implemented.
+- A backend `.env` may contain your local Supabase settings, but the current API only exposes a health check and does not yet use the database or Auth settings.
 
 ## Configure local development
 

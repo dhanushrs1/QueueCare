@@ -4,6 +4,8 @@
 
 Make it easy for patients to know what to do next and when to leave for the clinic. Help receptionists keep the real queue accurate with as few clicks and mistakes as possible. Keep the interface reassuring and clear without suggesting that waiting-time estimates are guarantees.
 
+The current homepage follows the supplied visual reference: a clean navigation header, split clinic-photo hero with an illustrative phone and queue display, a four-step “How it works” section, a booking call-to-action panel, and a multi-column footer. The queue display is illustrative and does not claim live clinic data. Patient booking, staff, and admin screens remain product workflows to implement against the backend.
+
 ## Experience principles
 
 1. **Mobile-first for patients.** Booking and tracking should work comfortably with one hand on a phone.
@@ -15,18 +17,19 @@ Make it easy for patients to know what to do next and when to leave for the clin
 
 ## Visual direction
 
-Use a calm, dependable clinic visual language: warm off-white or very light neutral backgrounds, deep teal or blue-green for primary actions, dark ink text, and restrained green/amber/red status colors. Reserve bright colors for actionable states and alerts. Avoid a sterile hospital look, excessive gradients, decorative medical imagery, and overly playful illustrations.
+Use the 60-30-10 color balance throughout the site: approximately 60% clean white canvas, 30% soft blue/muted charcoal structure and text, and 10% accent. Use teal (`#087F78`) strictly for primary call-to-action buttons and their hover state; use soft blue (`#EAF3F7`, `#F2F8FB`) for cards, information bands, and visual grouping. Keep all body copy and headings in readable dark blue-gray. Reserve green, amber, and red for meaningful operational status, always paired with a text label.
 
 ### Suggested design tokens
 
 | Token | Starting direction | Use |
 |---|---|---|
-| Primary | Deep teal, such as `#0B6B66` | Main buttons, active navigation, links |
-| Primary hover | Darker teal | Hover/pressed states |
-| Page background | Warm near-white, such as `#F7F8F6` | Patient and staff canvases |
+| Dominant | Pure white, `#FFFFFF` | Page canvas and primary surfaces (about 60%) |
+| Secondary | Soft blue, `#EAF3F7` / `#F2F8FB` | Structure, panels, cards, separators (about 30%) |
+| Secondary text | Dark blue-gray, `#18334A` / `#526B7E` | Headings and body copy |
+| CTA accent | Teal, `#087F78` | Primary action buttons only (about 10%) |
+| CTA hover | Deep teal, `#06645E` | Primary button hover/pressed state |
 | Surface | White | Cards, forms, queue rows |
-| Main text | Charcoal, such as `#172321` | Headings and body copy |
-| Muted text | Slate, such as `#5D6B68` | Helper text and timestamps |
+| Supporting text | Blue-gray, `#526B7E` | Supporting text and timestamps |
 | Success | Green with pale green background | Completed/available states |
 | Attention | Amber with pale amber background | Delays, waiting, estimate changes |
 | Critical | Red with pale red background | Errors, paused service, destructive confirmation |
@@ -34,10 +37,23 @@ Use a calm, dependable clinic visual language: warm off-white or very light neut
 
 Treat these as initial design values, not fixed brand requirements. Confirm contrast for text and controls before implementation. Do not communicate status by color alone; pair every status color with a label or icon.
 
-### Type and layout
+### Typography and layout
 
-- Use a highly readable sans-serif system font or a single well-supported web font.
-- Use a clear type scale: page title, section heading, card title, body, helper text.
+Use Open Sans across the complete website. The frontend defines the following 1.250 Major Third scale in `frontend/src/styles/global.css`; page styles should use these shared tokens instead of redefining heading sizes.
+
+| Element | Size | Line height | Weight | Letter spacing |
+|---|---:|---:|---:|---:|
+| H1 | 40px / 2.5rem | 1.2 / 48px | 700 | -0.02em |
+| H2 | 32px / 2rem | 1.25 / 40px | 700 | -0.01em |
+| H3 | 24px / 1.5rem | 1.3 / 31.2px | 600 | 0 |
+| H4 | 20px / 1.25rem | 1.4 / 28px | 600 | 0 |
+| H5 | 18px / 1.125rem | 1.4 | 600 | 0 |
+| H6 | 16px / 1rem | 1.5 | 600 | 0 |
+| Body | 17px default; allowed 16–18px | 1.5–1.6 | 400 | 0 |
+| Small/caption | 14px / 0.875rem | 1.5 / 21px | 400 | 0.01em |
+
+Keep paragraph measure around 45–75 characters per line. Maintain at least 16px body text on mobile and desktop. Apply this scale to buttons, forms, dialog copy, staff screens, status text, and future pages, not only the landing page.
+
 - Keep patient content in a centered, narrow column on desktop; allow full width on mobile.
 - Use a persistent, compact clinic identity in patient pages, with no heavy navigation.
 - Use a wider desktop workspace for staff, with a sidebar and a sticky top bar.

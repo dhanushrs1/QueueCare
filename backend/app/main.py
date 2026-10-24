@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.api import api_router
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -13,9 +14,4 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
-
-
-@app.get(f"{settings.api_v1_prefix}/health", tags=["health"])
-async def health_check() -> dict[str, str]:
-    """Confirm that the API process is responding; this does not check database health."""
-    return {"status": "ok", "service": "queuecare-api"}
+app.include_router(api_router, prefix=settings.api_v1_prefix)

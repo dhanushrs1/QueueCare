@@ -2,7 +2,7 @@
 
 **Prepared:** 24 October 2026
 **Source reviewed:** `about.txt`  
-**Project status:** Requirements analyzed; application implementation has not started.
+**Project status:** Responsive homepage and local development setup are implemented. The backend currently exposes a health endpoint; Supabase Auth, database access, booking, and queue APIs remain to be implemented.
 
 ## 1. Executive summary
 
@@ -80,6 +80,8 @@ The frontend and backend have different origins in production. The backend must 
 ```text
 QueueCare/
   frontend/                 # React + Vite + TypeScript
+    src/pages/home/         # homepage component and page stylesheet
+    src/styles/global.css   # shared typography, reset, and design tokens
   backend/
     app/                    # FastAPI routes, schemas, services, auth
     migrations/             # Alembic migrations
@@ -93,6 +95,10 @@ QueueCare/
 ```
 
 Keep frontend and backend independently installable and deployable. The frontend build should not require Python; the backend should not require the Vite build. Use migrations as the versioned source of database schema changes.
+
+### Current interface baseline
+
+The homepage follows the supplied reference composition: header, split clinic-photo hero with an illustrative mobile queue screen, four-step explainer, booking CTA panel, and multi-column footer. The clinic photo is a replaceable external image. Queue details shown in the visual are explicitly illustrative; no live clinic data is represented. Apply the 60-30-10 palette: white canvas, soft blue/muted charcoal structure, and teal reserved for primary CTA buttons. Open Sans and the shared type scale documented in `docs/UI_UX_PLAN.md` apply throughout the site. Patient booking, tracking, staff, and administrator actions remain design-preview or planned workflows; their data and actions must come from the backend when implemented.
 
 ### Initial implementation sequence
 
@@ -191,7 +197,7 @@ Do not provide real patient data for development. Use clearly synthetic fixtures
 
 ## 9. What this report delivers and what remains
 
-This report converts the supplied overview into an architecture, environment setup checklist, suggested repository structure, implementation order, and a concrete list of clinic inputs. It is a requirements/setup artifact, not a running application. No accounts, cloud projects, credentials, database schema, frontend, or backend have been created yet.
+This report converts the supplied overview into an architecture, environment setup checklist, repository structure, implementation order, and a concrete list of clinic inputs. A local frontend and backend starter now exist, but there is no database schema or integrated application workflow yet. The local backend `.env` contains configuration that must remain untracked and server-side; the current health route does not consume those Supabase values.
 
 Once the clinic inputs are settled, implementation can start with the repository skeleton, local environment templates, backend health route, frontend-to-backend connection, and database migrations. Production deployment will still require your service accounts and secrets to be configured in the respective provider dashboards.
 

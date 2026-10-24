@@ -1,4 +1,4 @@
-# QueueCare — Complete Project Overview & Development Specification
+# QueueCare â€” Complete Project Overview & Development Specification
 
 ## 1. Project Identity
 
@@ -435,14 +435,14 @@ Suggested booking statuses:
 
 Define the allowed state transitions explicitly. For example:
 
-- Booked → Checked in.
-- Checked in → Called.
-- Called → Serving.
-- Serving → Completed.
-- Called → Skipped.
-- Skipped → Checked in or another policy-approved state.
-- Booked → Cancelled.
-- Booked → No-show when the configured rules are satisfied.
+- Booked â†’ Checked in.
+- Checked in â†’ Called.
+- Called â†’ Serving.
+- Serving â†’ Completed.
+- Called â†’ Skipped.
+- Skipped â†’ Checked in or another policy-approved state.
+- Booked â†’ Cancelled.
+- Booked â†’ No-show when the configured rules are satisfied.
 
 Invalid transitions must be rejected by the backend.
 
@@ -498,7 +498,7 @@ Return an estimated time range rather than promising an exact consultation time.
 
 For example:
 
-- Estimated consultation: approximately 10:45–11:05 AM.
+- Estimated consultation: approximately 10:45â€“11:05 AM.
 - Recommended arrival: approximately 10:30 AM.
 - Status: Estimate may change.
 
@@ -655,7 +655,7 @@ If the frontend uses Supabase Auth directly, send the authenticated access token
 
 ## 15. Live Queue Updates
 
-For the first implementation, polling every 15–30 seconds is acceptable.
+For the first implementation, polling every 15â€“30 seconds is acceptable.
 
 - Fetch fresh queue information.
 - Display the last-updated time.
@@ -698,6 +698,10 @@ Design principles:
 - No fake statistics or fabricated patient data in production.
 
 The patient interface should feel welcoming and straightforward. The staff dashboard should prioritize operational speed, visibility and error prevention.
+
+### Current visual baseline
+
+The homepage follows a 60-30-10 palette: pure white as the dominant canvas, soft blue and muted charcoal for structure and copy, and teal (`#087F78`) reserved for primary CTA buttons. Open Sans follows the shared 1.250 Major Third type scale defined in `frontend/src/styles/global.css`: H1 40px/1.2/700/-0.02em; H2 32px/1.25/700/-0.01em; H3 24px/1.3/600; H4 20px/1.4/600; body 16â€“18px/1.5â€“1.6/400; and captions 14px/1.5/400/+0.01em. H5 and H6 extend the scale at 18px and 16px. The homepage includes the reference header, split hero with replaceable clinic photo and illustrative phone/queue artwork, four-step explainer, booking CTA panel, and multi-column footer. The queue art is illustrative; booking, tracking, staff, and admin workflows still require backend implementation.
 
 Use reusable components and a consistent design system rather than duplicating UI across pages.
 

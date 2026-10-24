@@ -1,7 +1,14 @@
-# Environment secrets
+# Local environment files and secrets (including nested app folders)
 .env
 .env.*
+**/.env
+**/.env.*
+.envrc
+**/.envrc
+
+# Keep only the blank templates in version control
 !.env.example
+!**/.env.example
 
 # Node / Vite
 node_modules/

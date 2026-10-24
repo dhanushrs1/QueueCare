@@ -24,7 +24,7 @@ Copy-Item frontend/.env.example frontend/.env
 Copy-Item backend/.env.example backend/.env
 ```
 
-Do not commit `.env` files or put private credentials in `frontend/.env`. Frontend variables prefixed with `VITE_` are public in the browser bundle.
+Local `.env`, `.env.local`, `.env.development`, `.env.production`, and `.envrc` files are ignored by Git, including inside `frontend/` and `backend/`. Only blank `.env.example` templates are intended to be committed. Do not use `git add -f` for local environment files, and do not put private credentials in `frontend/.env`; variables prefixed with `VITE_` are public in the browser bundle. Git ignore rules do not untrack a file that was committed earlier, so check `git status` before pushing.
 
 ## Run the backend
 

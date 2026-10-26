@@ -1,8 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import queueCareLogo from '../../assets/queuecare-logo.svg'
+import type { PatientData } from '../panel/PatientPanelPage'
 import './HomePage.css'
 
 type DialogName = 'book' | 'track' | 'privacy' | null
+
+interface HomePageProps {
+  onNavigatePanel?: (patientData?: Partial<PatientData>) => void
+}
 
 function Icon({ name, size = 18 }: { name: string; size?: number }) {
   const common = {
@@ -123,23 +128,52 @@ const FAQS = [
   },
 ]
 
-function HomePage() {
+function HomePage({ onNavigatePanel }: HomePageProps) {
   const [dialog, setDialog] = useState<DialogName>(null)
   const [phoneViewMode, setPhoneViewMode] = useState<'booked' | 'new-patient'>('booked')
   const [activeStepId, setActiveStepId] = useState<number>(1)
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
   // Booking & OTP State
-  const [bookingStage, setBookingStage] = useState<'form' | 'otp' | 'panel'>('form')
+  const [bookingStage, setBookingStage] = useState<'form' | 'otp'>('form')
   const [patientName, setPatientName] = useState('Rahul Sharma')
   const [patientPhone, setPatientPhone] = useState('9876543210')
   const [otpValue, setOtpValue] = useState('')
   const [otpError, setOtpError] = useState('')
-  const [assignedToken, setAssignedToken] = useState<number>(19)
+  const assignedToken = 19
 
   // Track search query
   const [trackQuery, setTrackQuery] = useState('')
   const [trackError, setTrackError] = useState('')
+
+  // Live Real-Time Clock for Phone Mockup
+  const [currentTime, setCurrentTime] = useState(() => new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Format real iOS-style status bar time (e.g. "9:45" or "10:15")
+  const phoneTime = (() => {
+    const h = currentTime.getHours() % 12 || 12
+    const m = currentTime.getMinutes().toString().padStart(2, '0')
+    return `${h}:${m}`
+  })()
+
+  // Format real estimated consultation call time (12 mins from now)
+  const etaCall = (() => {
+    const callTime = new Date(currentTime.getTime() + 12 * 60 * 1000)
+    return callTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })
+  })()
+
+  // Format real estimated arrival for next available token (18 mins from now)
+  const etaArrival = (() => {
+    const arrival = new Date(currentTime.getTime() + 18 * 60 * 1000)
+    return arrival.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })
+  })()
 
   useEffect(() => {
     if (!dialog) return
@@ -170,28 +204,51 @@ function HomePage() {
     setBookingStage('otp')
   }
 
-  // Handle OTP Submit -> Redirect to Patient Panel
+  // Handle OTP Submit -> Directly Redirect to Dedicated Patient Panel (NO POPUP!)
   const handleOtpVerify = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Accept demo OTP "4826" or any 4 digit code for smooth user testing
     if (otpValue.length < 4) {
       setOtpError('Please enter a valid 4-digit verification code.')
       return
     }
     setOtpError('')
-    setAssignedToken(19)
+    setDialog(null) // Close popup dialog completely!
     setPhoneViewMode('booked')
-    setBookingStage('panel') // Redirect directly to Patient Panel!
+
+    if (onNavigatePanel) {
+      onNavigatePanel({
+        tokenNumber: assignedToken || 19,
+        patientName: patientName.trim() || 'Rahul Sharma',
+        phoneNumber: patientPhone,
+        doctorName: 'Dr. Sarah Jenkins',
+        room: 'Room 2',
+        clinicName: 'QueueCare Health Clinic',
+      })
+    } else {
+      window.location.hash = '#/panel'
+    }
   }
 
-  // Handle Track Token Submit -> Open Patient Panel
+  // Handle Track Token Submit -> Directly Redirect to Dedicated Patient Panel (NO POPUP!)
   const handleTrackSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!trackQuery.trim()) return
-    // Show patient panel for found booking
-    setAssignedToken(18)
-    setBookingStage('panel')
-    setDialog('book') // opens the panel view
+    setDialog(null) // Close popup dialog completely!
+    const parsed = parseInt(trackQuery)
+    const tokenNum = isNaN(parsed) ? 18 : parsed
+
+    if (onNavigatePanel) {
+      onNavigatePanel({
+        tokenNumber: tokenNum,
+        patientName: 'Rahul Sharma',
+        phoneNumber: trackQuery.length >= 10 ? trackQuery : '9876543210',
+        doctorName: 'Dr. Sarah Jenkins',
+        room: 'Room 2',
+        clinicName: 'QueueCare Health Clinic',
+      })
+    } else {
+      window.location.hash = '#/panel'
+    }
   }
 
   const activeStep = JOURNEY_STEPS.find((s) => s.id === activeStepId) || JOURNEY_STEPS[0]
@@ -242,8 +299,8 @@ function HomePage() {
               </div>
 
               <h1 className="hero-title">
-                Smart clinic visits,
-                <span className="hero-highlight"> zero waiting room stress.</span>
+                Smart clinic visits,{' '}
+                <span className="hero-highlight">zero waiting room stress.</span>
               </h1>
 
               <p className="hero-lead">
@@ -294,7 +351,7 @@ function HomePage() {
 
                     {/* Realistic OLED Status Bar */}
                     <div className="phone-top-bar">
-                      <span className="phone-time">9:41</span>
+                      <span className="phone-time">{phoneTime}</span>
                       
                       {/* Dynamic Island with camera lens reflection */}
                       <div className="phone-dynamic-island">
@@ -362,6 +419,10 @@ function HomePage() {
                               <span className="metric-title">Est. Wait:</span>
                               <strong className="metric-val highlight">~12 mins</strong>
                             </div>
+                            <div className="metric-row">
+                              <span className="metric-title">Call ETA:</span>
+                              <strong className="metric-val highlight">{etaCall}</strong>
+                            </div>
                           </div>
                         </div>
 
@@ -396,7 +457,7 @@ function HomePage() {
                             <span className="next-label">Next Token:</span>
                             <span className="next-number">#19</span>
                           </div>
-                          <p className="unbooked-eta">Est. arrival: ~10:50 AM (approx 18 min wait)</p>
+                          <p className="unbooked-eta">Est. arrival: ~{etaArrival} (approx 18 min wait)</p>
                         </div>
 
                         <button
@@ -411,9 +472,9 @@ function HomePage() {
                         <button
                           type="button"
                           className="phone-mode-switch-btn"
-                          onClick={() => setPhoneViewMode('booked')}
+                          onClick={() => onNavigatePanel ? onNavigatePanel({ tokenNumber: 18 }) : setPhoneViewMode('booked')}
                         >
-                          Already have a token? View Token #18 →
+                          Already have a token? Open Patient Panel →
                         </button>
                       </div>
                     )}
@@ -426,7 +487,7 @@ function HomePage() {
                       </span>
                       <span
                         className="phone-tab"
-                        onClick={openTrackDialog}
+                        onClick={() => onNavigatePanel ? onNavigatePanel() : openTrackDialog()}
                         role="button"
                         tabIndex={0}
                       >
@@ -696,7 +757,7 @@ function HomePage() {
             if (e.target === e.currentTarget) setDialog(null)
           }}
         >
-          <div className={`dialog-box ${bookingStage === 'panel' && dialog === 'book' ? 'dialog-box-panel' : ''}`} role="dialog" aria-modal="true">
+          <div className="dialog-box" role="dialog" aria-modal="true">
             <button
               type="button"
               className="dialog-close-btn"
@@ -821,88 +882,11 @@ function HomePage() {
                       {otpError && <p className="otp-error-text">{otpError}</p>}
 
                       <button type="submit" className="btn btn-primary btn-block btn-lg">
-                        <span>Verify OTP & Open Patient Panel</span>
+                        <span>Verify OTP & Open Dedicated Patient Panel</span>
                         <Icon name="check" size={17} />
                       </button>
                     </form>
                   </>
-                )}
-
-                {/* STAGE 3: REDIRECTED PATIENTS PANEL */}
-                {bookingStage === 'panel' && (
-                  <div className="patient-panel-wrapper">
-                    {/* Patient Panel Header */}
-                    <div className="patient-panel-top">
-                      <div className="panel-user-badge">
-                        <Icon name="person" size={16} />
-                        <span>Welcome, <strong>{patientName || 'Patient'}</strong></span>
-                      </div>
-                      <span className="panel-status-pill">
-                        <span className="live-dot-mini" />
-                        Confirmed & Live
-                      </span>
-                    </div>
-
-                    {/* Big Confirmed Token Card */}
-                    <div className="panel-token-hero">
-                      <span className="panel-token-kicker">YOUR ASSIGNED CLINIC TOKEN</span>
-                      <div className="panel-token-number-row">
-                        <span className="token-symbol">#</span>
-                        <strong className="token-digit">{assignedToken}</strong>
-                      </div>
-                      <span className="panel-doctor-tag">Dr. Sarah Jenkins • Room 2</span>
-                    </div>
-
-                    {/* Live Queue Progress Ticker */}
-                    <div className="panel-queue-box">
-                      <div className="panel-queue-header">
-                        <span className="queue-label">CLINIC QUEUE STATUS</span>
-                        <span className="queue-eta">Est. Wait: <strong>~18 mins</strong></span>
-                      </div>
-
-                      <div className="panel-live-metric-row">
-                        <div className="metric-cell">
-                          <span className="cell-label">Now Serving</span>
-                          <strong className="cell-val text-teal">Token #14</strong>
-                        </div>
-                        <div className="metric-divider" />
-                        <div className="metric-cell">
-                          <span className="cell-label">Ahead of You</span>
-                          <strong className="cell-val">4 Patients</strong>
-                        </div>
-                        <div className="metric-divider" />
-                        <div className="metric-cell">
-                          <span className="cell-label">Est. Time</span>
-                          <strong className="cell-val">10:52 AM</strong>
-                        </div>
-                      </div>
-
-                      {/* Progress Track */}
-                      <div className="panel-progress-bar">
-                        <div className="panel-progress-fill" style={{ width: '70%' }} />
-                      </div>
-                    </div>
-
-                    {/* Patient Alert & Details */}
-                    <div className="panel-notice-box">
-                      <Icon name="bell" size={17} />
-                      <div>
-                        <strong>Real-Time SMS Alert Active</strong>
-                        <p>We'll text your phone (+91 {patientPhone}) the moment Token #17 enters so you can arrive on time.</p>
-                      </div>
-                    </div>
-
-                    {/* Panel Action Buttons */}
-                    <div className="panel-actions">
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-block"
-                        onClick={() => setDialog(null)}
-                      >
-                        Keep Token & Return to Home
-                      </button>
-                    </div>
-                  </div>
                 )}
               </>
             )}
